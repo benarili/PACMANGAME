@@ -550,21 +550,21 @@ function generate() {
                     break;
 
                 case "GHOST1":
-                    var behavior = 1; // every other ghost will be agressive
+                    var behavior = 0; // agressive
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
                     //ghostId++;
                     break;
 
                 case "GHOST2":
-                    var behavior = 1; // every other ghost will be agressive
+                    var behavior = 1; // nonchalant
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
                     //ghostId++;
                     break;
 
                 case "GHOST3":
-                    var behavior = 0; // every other ghost will be agressive
+                    var behavior = 0; //  agressive
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
                     //ghostId++;
