@@ -273,6 +273,7 @@ function endGame(status) {
         drawYouCanDoBetter();
     }
     noLoop();
+    // resetParamaters();
 }
 function draw() {
     try {
