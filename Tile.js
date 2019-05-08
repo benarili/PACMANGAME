@@ -1,6 +1,6 @@
 const TYPES = ["BARRIER", "empty", "OPEN", "+15_FOOD", "GHOST1", "PACMAN","+25_FOOD","+5_FOOD","CHERRY","GHOST2","GHOST3"];
 const DIMENSIONS = 14;	// size of maze
-const SIZE = 35;	// size of each tile
+const SIZE = 35;	// size of each tile of the maze
 const HALF_SIZE = SIZE / 2;
 const THIRD_SIZE = SIZE / 3;
 const QUARTER_SIZE = SIZE / 4;
@@ -49,7 +49,7 @@ Tile.prototype.update = function() {
     if (!this.intact) // no need to update
         return;
 
-    /* movement */
+    // movement
     if (this.moving) {
 
         this.x = lerp(this.x, this.destination.x, this.speed);
@@ -67,7 +67,7 @@ Tile.prototype.update = function() {
         }
     }
 
-    /* eating */
+    // eating
     if (this.type == "PACMAN") { // only PACMAN may eat!
 
         // Tile to which Pac-man is moving
@@ -116,7 +116,7 @@ Tile.prototype.update = function() {
                 }
             }
         }
-        /* movement */
+        // movement
         if (this.moving) // can't move multiple times at once
             return;
 
@@ -128,7 +128,7 @@ Tile.prototype.update = function() {
             getTile(this.x, this.y + 1),	// bottom
         ];
 
-        /* sort by distance from pacman */
+        //sort by distance from pacman
         possibleMoves.sort(function (a, b) {
 
             var aD = dist(a.x, a.y, pacman.x, pacman.y);
@@ -145,8 +145,7 @@ Tile.prototype.update = function() {
                     break;
                 }
             }
-        } else {
-            //nonchalant
+        } else { //nonchalant
             var index = Math.floor(random(4));
             this.move(possibleMoves[index].x, possibleMoves[index].y, false);
         }
@@ -161,7 +160,7 @@ Tile.prototype.draw = function() {
 
             strokeWeight(5);
             stroke(0);
-            fill("#0000FF");
+            fill("#3e8e41");
             rect(this.x * SIZE, this.y * SIZE, SIZE, SIZE);
             break;
 
@@ -207,7 +206,6 @@ Tile.prototype.draw = function() {
             image(ghostImg3, this.x * SIZE, this.y * SIZE, ghostImg3.height / 12, ghostImg3.width / 12);
             break;
 
-
         case "PACMAN":
 
             if(lastKeyPressed===1) {//up
@@ -248,9 +246,10 @@ Tile.prototype.draw = function() {
 };
 
 Tile.prototype.move = function(x, y, relative) {
+
     var destinationX, destinationY;
 
-    if (relative) { // relative to the tile
+    if (relative) {
 
         destinationX = this.x + x;
         destinationY = this.y + y;
@@ -259,6 +258,7 @@ Tile.prototype.move = function(x, y, relative) {
         destinationX = x;
         destinationY = y;
     }
+
     var destinationTile = getTile(destinationX, destinationY);
 
     if(typeof destinationTile === 'undefined')
@@ -270,14 +270,14 @@ Tile.prototype.move = function(x, y, relative) {
         (type == "GHOST1" && this.type == "GHOST1") || (type == "GHOST2" && this.type == "GHOST2") || (type == "GHOST3" && this.type == "GHOST3") || (type == "CHERRY" && this.type == "CHERRY"))
         return false;
 
-    this.moving = true; // begin movement next update
+    this.moving = true; // will begin movement next update
 
     this.destination = createVector(destinationX, destinationY);
-
 
     return true;
 };
 
 function getTile(x, y) {
+
     return fie[y * DIMENSIONS + x];
 }

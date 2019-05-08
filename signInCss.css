@@ -247,10 +247,14 @@ td{
     left: 0;
     top: 0;
     width: 100%; /* Full width */
-    height: 100%; /* Full height */
+    /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal {
+    height: 100%;
 }
 
 /* Modal Content/Box */
@@ -299,6 +303,32 @@ td{
 }
 #user-details:first-letter {
     font-size: 300%;
+}
+.newGameButton{
+    color: #fffdfc;
+    background-color: #3e8e41;
+    position:absolute;
+    top:23%;
+    left:60%;
+    width:10%;
+    height:5%;
+}
+.gameTimer{
+    /*font-size: 28px;*/
+    color: #fffdfc;
+    position:absolute;
+    top:29.5%;
+    left:62%;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
 }
 
 

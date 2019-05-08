@@ -1,5 +1,4 @@
-
-/** 2D map of the field;
+/**
  * 0 = BARRIER
  * 1 = empty
  * 3 = +15FOOD
@@ -64,9 +63,6 @@ var youCanDoBetter_img;
 var n1=0;
 var n2=0;
 var n3=0;
-var foodNum1=0;
-var foodNum2=0;
-var foodNum3=0;
 var settings=null;
 var controls = {
     upkey : 38,
@@ -84,37 +80,68 @@ function setSettings(newSettings){
     controls = settings['controls'];
     ghostsNum = settings['amountOfGhosts'];
 }
-
+// Load images
 function preload(){
-    ghostImg1 = loadImage('pics/ghost1.png'); // Load the image
-    ghostImg2 = loadImage('pics/ghost2.png'); // Load the image
-    ghostImg3 = loadImage('pics/ghost3.png'); // Load the image
-    pacman_Lives_img = loadImage('pics/pacman_lives.png'); // Load the image
-    cherryImg= loadImage('pics/cherry.png'); // Load the image
-    youCanDoBetter_img= loadImage('pics/better.png'); // Load the image
-    end_game_img = loadImage('pics/endGame.png'); // Load the image
-    won_game_img = loadImage('pics/pacman_won.jpg'); // Load the image
+    ghostImg1 = loadImage('pics/ghost1.png');
+    ghostImg2 = loadImage('pics/ghost2.png');
+    ghostImg3 = loadImage('pics/ghost3.png');
+    pacman_Lives_img = loadImage('pics/pacman_lives.png');
+    cherryImg= loadImage('pics/cherry.png');
+    youCanDoBetter_img= loadImage('pics/better.png');
+    end_game_img = loadImage('pics/endGame.png');
+    won_game_img = loadImage('pics/pacman_won.jpg');
 }
 
 function resetSketchSameGame() {
-    //console.log('pacman (x,y): '+"("+pacman.x+", "+pacman.y);
-    fie;
-    ghosts;
-    ghosts.x=1;
-    ghosts.y=12;
-    cherrys;
-    cherrys.x=1;
-    cherrys.y=1;
-    pacman;
-    pacman.x=12;
-    pacman.y=6;
-    fie=shufflePacman(fie);
-    //special_food_num;
+    for (var i = 0; i < fie.length; i++) {
+        if(ghostsNum==1) {
+            if (fie[i].type == "GHOST1") {
+                fie[i].x = 1;
+                fie[i].y = 12;
+            }
+        }
+        if(ghostsNum==2) {
+            if (fie[i].type == "GHOST2") {
+                fie[i].x = 12;
+                fie[i].y = 1;
+            }
+            else if(fie[i].type == "GHOST1"){
+                fie[i].x = 1;
+                fie[i].y = 12;
+            }
+        }
+        if(ghostsNum==3) {
+            if (fie[i].type == "GHOST3") {
+                fie[i].x = 12;
+                fie[i].y = 1;
+            }
+            else if (fie[i].type == "GHOST2") {
+                fie[i].x = 1;
+                fie[i].y = 12;
+            }
+            else if(fie[i].type == "GHOST1"){
+                fie[i].x = 12;
+                fie[i].y = 12;
+            }
+        }
+        if(fie[i].type== "PACMAN") {
+            for (var j = 0; j < fie.length; j++) {
+                if(fie[j].type== "empty") {
+                    fie[i].x = fie[j].x;
+                    fie[i].y = fie[j].y;
+                    fie = shufflePacman(fie);
+                }
+            }
+        }
+        if(fie[i].type== "CHERRY"){
+            fie[i].x=1;
+            fie[i].y=1;
+        }
+    }
 
     lastKeyPressed=3;
     ghostsNum=settings!=null ? settings['amountOfGhosts'] : 1;
     Ghost_speed=settings!=null ? settings['ghostSpeed'] : 1;
-    //pacman_remain=1;
     endScore;
     score;
     counter = settings != null ? settings['time'] : 76;
@@ -123,7 +150,6 @@ function resetSketchSameGame() {
 }
 
 function resetParamaters() {
-    console.log('sketching new game');
     FIELD = [
         "0,0,0,0,0,0,0,0,0,0,0,0,0,0",
         "0,1,1,1,1,1,1,1,1,1,1,1,1,0",
@@ -143,10 +169,9 @@ function resetParamaters() {
     window.clearInterval(interval);
     if(timer!=null)
         timer.remove();
-    timer=createElement('timer', 'timer');
-    var a = (windowWidth - width) *1.45;
-    var b = (windowHeight - height)*0.9 ;
-    timer.position(a, b); //850, 120
+    timer=createElement('timer');
+    timer.addClass('gameTimer');
+
     interval=setInterval(timeIt, 1000);
     shuffledField = [];
     shuffledField2 = [];
@@ -160,11 +185,7 @@ function resetParamaters() {
     endScore=0;
     lastKeyPressed=3;
     ghostsNum=1;
-    timer.style('color', '#fffdfc');
-
     pacman_lives=3;
-    lives=pacman_lives;
-    //timer.style('display', 'block');
     special_food_num=50;
     Ghost_speed=1;
     pacman_remain=1;
@@ -179,30 +200,24 @@ function resetParamaters() {
 function resetSketchNewGame() {
     resetParamaters();
     fie = generate2();
-    //draw();
 }
 function setup() {
     if(canvas!=null)
         canvas.remove();
     canvas=createCanvas(700,500);
     canvas.style('display', 'block');
-    var z = (windowWidth - width) / 2;
-    var w = (windowHeight - height)*0.8 ;
-    canvas.position(z, w);
+    centerCanvas();
 
     newGame();
 
     if(button!=null)
         button.remove();
     button = createButton("New Game");
-    var t = (windowWidth - width) *1.4;
-    var y = (windowHeight - height)*0.7 ;
-    button.position(t, y); //830, 100
     button.mousePressed(function () {
         resetParamaters();
         newGame();
     });
-
+    button.addClass('newGameButton');
     var div = document.getElementById("game");
     while (div.firstChild) {
         div.removeChild(div.firstChild);
@@ -211,28 +226,26 @@ function setup() {
     div.appendChild(button.elt);
     div.appendChild(timer.elt);
 }
+function centerCanvas() {
+    var x = (windowWidth - width) / 2;
+    var y = (windowHeight - height)*0.8 ;
+    canvas.position(x, y);
+}
+
+function windowResized() {
+    centerCanvas();
+}
 
 function newGame(){
     loop();
     if(pacman_lives===3) {
         resetSketchNewGame();
-       // pacman_lives--;
     }
     if(pacman_lives===2 || pacman_lives===1){
         resetSketchSameGame();
-        ghosts.x=1;
-        ghosts.y=12;
-        cherrys;
-        cherrys.x=1;
-        cherrys.y=1;
-        pacman;
-        pacman.x=12;
-        pacman.y=6;
-        fie=shufflePacman(fie);
         draw();
     }
     if(pacman_lives===0){
-        //pacman.intact=false;
         endGame('lost');
         resetSketchNewGame();
     }
@@ -248,18 +261,6 @@ function newGame(){
     }
 }
 
-function drawYouCanDoBetter(){
-    textSize(60);
-    textAlign(LEFT);
-    fill("#070700");
-    stroke("#070700");
-    strokeWeight(3);
-    background(youCanDoBetter_img);
-    text("you", width/2-320, height/2+60 );
-    text("can do", width/2-320 , height/2+120 );
-    text("better", width/2-320 , height/2+190 );
-}
-
 function endGame(status) {
 
     if (status == 'won') {
@@ -273,8 +274,8 @@ function endGame(status) {
         drawYouCanDoBetter();
     }
     noLoop();
-    // resetParamaters();
 }
+
 function draw() {
     try {
         background('#1c1c00');   //'#1c1c00'
@@ -305,48 +306,55 @@ function draw() {
         handleInput(); // keyboard input
     }
     catch (e) {
-        console.log(e.stack);
     }
 }
-
 
 function drawWon() {
     textSize(60);
     textAlign(LEFT);
     fill("#070700");
     stroke("#070700");
-    strokeWeight(3);
+    strokeWeight(4);
     background(won_game_img);
-    text("We", width/2-320, height/2+60 );
-    text("have a", width/2-320 , height/2+120 );
-    text("Winner!!!", width/2-320 , height/2+190 );
+    text("We", width/2-320, height/2+40 );
+    text("have a", width/2-320 , height/2+100 );
+    text("Winner!!!", width/2-320 , height/2+170 );
+    text("Your Score is: "+score, width/2-320 , height/2+230 );
 }
 
 function drawEnd() {
-    timer.hide();
-    textSize(60);
+    textSize(50);
     textAlign(CENTER);
     fill("#070700");
     stroke("#070700");
     strokeWeight(3);
     background(end_game_img);
-    text("You Lost!", width / 2+100, height / 2 +80);
-
+    text("You Lost!", width / 2 - 200, height / 2 - 90);
+    text("Your Score is: "+score, width / 2 + 120 , height / 2 + 100);
 }
 
-/**
- * draws all tiles except types GHOST and PACMAN
- * draws score
- */
+function drawYouCanDoBetter(){
+    textSize(60);
+    textAlign(LEFT);
+    fill("#070700");
+    stroke("#070700");
+    strokeWeight(3);
+    background(youCanDoBetter_img);
+    text("you can", width / 2 - 310, height / 2 + 60 );
+    text("do better", width / 2 - 310 , height / 2 + 120 );
+    text("Your Score is: " + score, width / 2 - 310, height / 2 + 180);
+}
+
+//draws all tiles except types GHOST's, PACMAN and CHERRY also draws score
 function drawScale() {
-    /* walls */
+    //walls
     for (var i = 0; i < fie.length; i++) {
         if (fie[i].intact) {
             if (fie[i].type != "GHOST1" && fie[i].type != "GHOST2" && fie[i].type != "GHOST3" && fie[i].type != "CHERRY" && fie[i].type != "PACMAN")
                 fie[i].draw();
         }
     }
-    /* score */
+    //score
     noStroke();
     fill("#fffdfc");
     textSize(20);
@@ -354,12 +362,11 @@ function drawScale() {
     text(score, 580,156 );
     var s = 'Score:';
     text(s, 500, 140, 70, 80);
-
-    /* timer */
+    //timer
     timer.style('color', '#fffdfc');
     var t = 'Time:';
     text(t, 500, 10, 70, 80);
-
+    //lives
     var l = 'Lives:';
     text(l, 500, 60, 70, 80);
 }
@@ -451,9 +458,6 @@ function shufflePacman() {
 }
 
 function generate() {
-    var count1=0;
-    var count2=0;
-    var count3=0;
     n1 = round(special_food_num * 0.3);
     n2 = round(special_food_num * 0.1);
     n3 = round(special_food_num * 0.6);
@@ -469,15 +473,12 @@ function generate() {
                 if((k != 12 || r != 1)){
                     if((k != 1 || r != 12)){
                         if((k != 12 || r != 12)){
-
-
                             if (row[r] == 1 && n1 > 0) {
                                 if (row[r] !== 3 && row[r] !== 6 && row[r] !== 7 && row[r] !== 5 && row[r] !== 0) {
                                     row[r] = "3";
                                     FIELD.splice(k, 1, row.toString());
                                     n1--;
                                     special_food_num--;
-                                    count1++;
                                 }
                             }
                             if ( row[r] == 1 && n2 > 0) {
@@ -486,7 +487,6 @@ function generate() {
                                     FIELD.splice(k, 1, row.toString());
                                     n2--;
                                     special_food_num--;
-                                    count2++;
                                 }
                             }
                             if ( row[r] == 1 && n3 > 0) {
@@ -495,7 +495,6 @@ function generate() {
                                     FIELD.splice(k, 1, row.toString());
                                     n3--;
                                     special_food_num--;
-                                    count3++;
                                 }
                             }
                         }
@@ -530,13 +529,11 @@ function generate() {
             }
         }
     }
-    var f = []; // returning array
+    var f = [];
     f.length = 0;
     for (var i = 0; i < FIELD.length; i++) { // loop through each string
-
         row = FIELD[i].split(",");
         for (var j = 0; j < row.length; j++) { // loop through numbers in string
-
             var type = TYPES[row[j]];
             var tile = new Tile(j, i, type, -1, -1);
 
@@ -551,24 +548,21 @@ function generate() {
                     break;
 
                 case "GHOST1":
-                    var behavior = 0; // agressive
+                    var behavior = 0; //agressive
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
-                    //ghostId++;
                     break;
 
                 case "GHOST2":
-                    var behavior = 1; // nonchalant
+                    var behavior = 1; //nonchalant
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
-                    //ghostId++;
                     break;
 
                 case "GHOST3":
-                    var behavior = 0; //  agressive
+                    var behavior = 0; //agressive
                     ghosts.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
-                    //ghostId++;
                     break;
 
                 case "BARRIER":
@@ -577,28 +571,24 @@ function generate() {
 
                 case "CHERRY":
                     cherry=tile;
-                    endScore += 50; // worth 25 points
-                    var behavior = 0; // every other ghost will be agressive
+                    endScore += 50; // worth 50 points
+                    var behavior = 1; //nonchalant
                     cherrys.push(new Tile(j, i, type, behavior));
                     f.push(new Tile(j, i, "OPEN"));
                     break;
 
-
                 case "+25_FOOD":
                     endScore += 25; // worth 25 points
-                    foodNum1++;
                     f.push(tile);
                     break;
 
                 case "+15_FOOD":
                     endScore += 15; // worth 15 points
-                    foodNum2++;
                     f.push(tile);
                     break;
 
                 case "+5_FOOD":
                     endScore += 5; // worth 5 point
-                    foodNum3++;
                     f.push(tile);
                     break;
             }
@@ -611,6 +601,7 @@ function generate2() {
     field = generate();
     shuffledField = shuffleBalls(field);
     shuffledField2 = shufflePacman(shuffledField);
+
     for (var i = 0; i < shuffledField2.length; i++) {
         if (shuffledField2[i].type == "OPEN") {
             shuffledField2[i].type = "CHERRY";

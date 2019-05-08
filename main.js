@@ -301,6 +301,10 @@ function setBackgroundImage(element, imageURL) {
 function goToDiv(divName) {
     document.getElementById("user-details").style.display = loggedInUser==null?'none':'block';
     if (divName == 'login'){
+        if (loggedInUser!=null){
+            alert('Already Logged In');
+            return;
+        }
         //initialize visitibilities
         document.getElementById("div-logInForm").style.display='block';
         document.getElementById("welcome").style.display='none';
@@ -308,10 +312,22 @@ function goToDiv(divName) {
         document.getElementById("game").style.display='none';
         setBackgroundImage(document.getElementsByTagName('body')[0],'pics/pacman-seamless-generated-pattern-miroslav-nemecek.jpg');
         var gameCanvas = document.getElementById('gamecanvas');
+        audio.pause();
         if (gameCanvas != null)
             gameCanvas.style.display='none';
     }
     else if (divName == 'signup'){
+        if (loggedInUser!=null){
+            var messageText = 'Already Logged in.\mDo you want to log out first?';
+            var wantsToLogOut = confirm(messageText);
+            if (wantsToLogOut){
+                logOut();
+                goToDiv('signup');
+                return;
+            }
+            else
+                return;
+        }
         document.getElementById("welcome").style.display='none';
         document.getElementById("div-logInForm").style.display='none';
         document.getElementById("game").style.display='none';
@@ -319,6 +335,7 @@ function goToDiv(divName) {
         document.getElementById("div_configForm").style.display='none';
         setBackgroundImage(document.getElementsByTagName('body')[0],'pics/pacman-seamless-generated-pattern-miroslav-nemecek.jpg');
         var gameCanvas = document.getElementById('gamecanvas');
+        audio.pause();
         if (gameCanvas != null)
             gameCanvas.style.display='none';
     }
@@ -329,6 +346,7 @@ function goToDiv(divName) {
         document.getElementById("div-regForm").style.display='none';
         document.getElementById("div_configForm").style.display='none';
         setBackgroundImage(document.getElementsByTagName('body')[0],'pics/pacman_eating.gif');
+        audio.pause();
         var gameCanvas = document.getElementById('gamecanvas');
         if (gameCanvas != null)
             gameCanvas.style.display='none';
@@ -344,6 +362,7 @@ function goToDiv(divName) {
             document.getElementById("div_configForm").style.display='block';
             setBackgroundImage(document.getElementsByTagName('body')[0],'pics/pacman-seamless-generated-pattern-miroslav-nemecek.jpg');
             var gameCanvas = document.getElementById('gamecanvas');
+            audio.pause();
             if (gameCanvas != null)
                 gameCanvas.style.display='none';
         }
